@@ -7,8 +7,11 @@ var Login = (function () {
     function Login(cb) {
         this.cb = cb;
     }
-    Login.prototype.emmitMessage = function (message) {
-        Login.io.emit('login', message);
+    Login.prototype.emmitMessage = function (id, password) {
+        Login.io.emit('login:chat', id, password);
+    };
+    Login.prototype.getCourses = function (id) {
+        Login.io.emit('courseList:chat', id);
     };
     return Login;
 }());
@@ -16,5 +19,6 @@ Login.io = socket;
 function messageReceived(respose) {
 }
 var login = new Login(messageReceived);
-login.emmitMessage('hola mundoo');
+login.emmitMessage(1, '123');
+login.getCourses(1);
 //# sourceMappingURL=login.js.map

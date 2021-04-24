@@ -9,8 +9,12 @@ class Login{
     static io: any;
     constructor(private cb: Function){}
 
-    emmitMessage(message: string){
-        Login.io.emit('login',message);
+    emmitMessage(id: number , password:string){
+        Login.io.emit('login:chat',id,password);
+    }
+
+    getCourses(id:number){
+        Login.io.emit('courseList:chat',id)
     }
 
 }
@@ -23,5 +27,7 @@ function messageReceived(respose:any){
 
 let login:Login = new Login(messageReceived);
 
-login.emmitMessage('hola mundoo');
+login.emmitMessage(1,'123');
+login.getCourses(1);
+
 
