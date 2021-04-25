@@ -1,6 +1,6 @@
 interface IReadable<T,ID>{
-    findAll(): Array<T> | string;
-    findById(id:ID): T | string;
+    findAll(): Array<T>;
+    findById(id:ID): T;
 }
 export default IReadable;
 

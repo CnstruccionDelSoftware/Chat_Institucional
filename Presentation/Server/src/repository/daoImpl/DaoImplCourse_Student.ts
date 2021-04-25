@@ -10,18 +10,18 @@ class DaoImplCourse_Student implements DaoCourse_Student {
                                                  new Course_Student(3,1,2)];
 
 
-    findAll(): Course_Student[] | string {
+    findAll(): Course_Student[] {
         throw new Error("Method not implemented.");
     }
-    findById(id: number): string | Course_Student {
+    findById(id: number): Course_Student {
         throw new Error("Method not implemented.");
     }
 
-    findStudentAllCourses(id: number): string | Course_Student[] {
+    findStudentCourses(id: number): Course_Student[] {
         const courseList = this.course_student_list.filter(cr => cr.getId_student() === id)!;
 
         if(courseList == null){
-            return "No tiene secciones";
+            throw "No tiene secciones";
         }else{
             return courseList;
         }

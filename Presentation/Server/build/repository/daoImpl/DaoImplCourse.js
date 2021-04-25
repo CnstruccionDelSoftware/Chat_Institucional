@@ -11,7 +11,7 @@ var DaoImplCourse = (function () {
     DaoImplCourse.prototype.findAll = function () {
         var courseList = this.course_list;
         if (courseList == null) {
-            return "no hay secciones";
+            throw "no hay secciones";
         }
         else {
             return courseList;

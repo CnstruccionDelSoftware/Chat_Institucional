@@ -10,14 +10,21 @@ var http = require("http");
 var socketIO = require("socket.io");
 var express = require("express");
 var path = require("path");
-var expressServer = server_1.default.init(12000, '192.168.0.101');
+var DaoImplMessage_1 = __importDefault(require("./repository/daoImpl/DaoImplMessage"));
+var loginController_1 = require("./controllers/loginController");
+var expressServer = server_1.default.init(5000, 'http://localhost');
 var server = http.createServer(expressServer.getApp());
 var io = new socketIO.Server(server);
 expressServer.getApp().use(router_1.default);
 expressServer.getApp().use(express.static(path.join(__dirname, 'controllers')));
+expressServer.getApp().use(express.json());
+expressServer.getApp().use(express.urlencoded({ extended: true }));
+expressServer.getApp().use(require('cors')());
+expressServer.getApp().post("/test", loginController_1.loginUser);
 io.on('connection', function (socket) {
     console.log('new connection', socket.id);
     var serviceChat = new ServiceChatImpl_1.default();
+    var dao = new DaoImplMessage_1.default();
     socket.on('login:chat', function (id, password) {
         var res = serviceChat.login(id, password);
         console.log(res);
@@ -27,5 +34,5 @@ io.on('connection', function (socket) {
         console.log(res);
     });
 });
-server.listen(12000, '192.168.0.101');
+server.listen(5000);
 //# sourceMappingURL=index.js.map

@@ -5,16 +5,16 @@ class DaoImplCourse implements DaoCourse {
     
     course_list:Array<Course> = [new Course(1, 'Matematica') , new Course(2 ,'Ingles')];
 
-    findAll(): Course[] | string {
+    findAll(): Course[]{
         const courseList = this.course_list;
         if(courseList == null){
-            return "no hay secciones"
+            throw "no hay secciones";
         }else{
             return courseList;
         }
         
     }
-    findById(id: number): string | Course {
+    findById(id: number): Course {
         throw new Error("Method not implemented.");
     }
 
