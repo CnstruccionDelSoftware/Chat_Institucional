@@ -32,28 +32,48 @@ var ServiceChatImpl = (function () {
     };
     ServiceChatImpl.prototype.listStudentCourses = function (id) {
         var course_student = this.daoCourse_Student.findStudentCourses(id);
-        var courselist = this.daoCourse.findAll();
+        console.log(course_student);
+        var courseList = this.daoCourse.findAllWithStudentId(course_student);
+        console.log(3);
         if (course_student.valueOf() == "No tiene secciones") {
             throw "no tiene secciones";
         }
-        else if (courselist.valueOf() == "no hay secciones") {
+        else if (courseList.valueOf() == "no hay secciones") {
             throw "no hay secciones";
         }
         else {
-            var cs = Object.assign(new Array(), course_student);
-            var cl = Object.assign(new Array(), courselist);
-            var res = new Array();
-            for (var i = 0; i < cl.length; i++) {
-                for (var j = 0; j < cs.length; j++) {
-                    if (cl[i].getId_course() == cs[j].getId_course()) {
-                        res.push(cl[i]);
-                    }
-                }
-            }
-            return res;
+            return courseList;
         }
     };
     ServiceChatImpl.prototype.sendMessage = function (message) {
+    };
+    ServiceChatImpl.prototype.findStudentById = function (studentId) {
+        var student = this.daoStudent.findById(studentId);
+        if (!student) {
+            throw "No existe el estudiante!";
+        }
+        else {
+            return student;
+        }
+        ;
+    };
+    ServiceChatImpl.prototype.findCourseById = function (courseId) {
+        var course = this.daoCourse.findById(courseId);
+        if (!course) {
+            throw "No existe el curso";
+        }
+        else {
+            return course;
+        }
+    };
+    ServiceChatImpl.prototype.findMessagesByCourseId = function (courseId) {
+        var messages = this.daoMessage.findAllWithCourseId(courseId);
+        if (!messages) {
+            throw "No hay mensajes en ese curso";
+        }
+        else {
+            return messages;
+        }
     };
     return ServiceChatImpl;
 }());

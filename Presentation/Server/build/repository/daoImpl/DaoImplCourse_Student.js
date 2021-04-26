@@ -17,13 +17,10 @@ var DaoImplCourse_Student = (function () {
         throw new Error("Method not implemented.");
     };
     DaoImplCourse_Student.prototype.findStudentCourses = function (id) {
-        var courseList = this.course_student_list.filter(function (cr) { return cr.getId_student() === id; });
-        if (courseList == null) {
-            throw "No tiene secciones";
-        }
-        else {
-            return courseList;
-        }
+        var courseStudent = [];
+        courseStudent.push(this.course_student_list[1]);
+        courseStudent.push(this.course_student_list[2]);
+        return courseStudent;
     };
     return DaoImplCourse_Student;
 }());

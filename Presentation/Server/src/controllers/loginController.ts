@@ -42,20 +42,22 @@ const jwt = require('jwt-then');
 
 const serviceChat:ServiceChatImpl = new ServiceChatImpl();
 
-export const loginUser = (req:Request,res:Response) => {
+export const loginUser = async (req:Request,res:Response) => {
     try{
 
-        //const {id, password} = req.body;
-        console.log(req.body);
+        const {id, password} = req.body;
 
-        //const student:Student = serviceChat.login(id, password);
+        const student:Student = serviceChat.login(id, password);
+
+        const token = await jwt.sign({id:id}, process.env.SECRET)
 
         res.json({
             message: "User logged in succesfully!",
+            token
         })
     } catch {
         res.status(401).json({
-            message: "User error!"
+            message: "User error!",
         })
     }
     

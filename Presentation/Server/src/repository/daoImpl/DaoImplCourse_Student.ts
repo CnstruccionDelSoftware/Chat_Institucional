@@ -18,13 +18,19 @@ class DaoImplCourse_Student implements DaoCourse_Student {
     }
 
     findStudentCourses(id: number): Course_Student[] {
-        const courseList = this.course_student_list.filter(cr => cr.getId_student() === id)!;
+        // const courseList = this.course_student_list.filter(cr => cr.getId_student() === id)!;
+        // console.log("Courselist"+courseList)
 
-        if(courseList == null){
-            throw "No tiene secciones";
-        }else{
-            return courseList;
-        }
+        // if(courseList == null){
+        //     throw "No tiene secciones";
+        // }else{
+        //     return courseList;
+        // }
+        let courseStudent:Course_Student[] = [];
+        courseStudent.push(this.course_student_list[1])
+        courseStudent.push(this.course_student_list[2])
+
+        return courseStudent;
     }
 
 }

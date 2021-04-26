@@ -12,6 +12,6 @@ const router = Router();
 
 
 //router.post("/user/login",catchErrors(loginUser))
-router.post("/user/login", loginUser)
+router.post("/", catchErrors(loginUser))
 
 export default router;

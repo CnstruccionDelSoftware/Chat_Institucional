@@ -14,7 +14,6 @@ class MessageModel{
         this.course = course;
         this.content = content;
     }
-
     
     public getId_messageModel(): number {
         return this.id_messageModel;

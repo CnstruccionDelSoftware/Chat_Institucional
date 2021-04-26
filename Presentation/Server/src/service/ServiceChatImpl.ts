@@ -37,32 +37,65 @@ class ServiceChatImpl implements ServiceChat{
 
     listStudentCourses(id: number): Array<Course> {
         const course_student = this.daoCourse_Student.findStudentCourses(id);
-        const courselist = this.daoCourse.findAll();
+        console.log(course_student)
+
+        const courseList = this.daoCourse.findAllWithStudentId(course_student);
+        console.log(3)
+
 
         if(course_student.valueOf() == "No tiene secciones"){
             throw "no tiene secciones";
         }
-        else if(courselist.valueOf() == "no hay secciones"){
+        else if(courseList.valueOf() == "no hay secciones"){
             throw "no hay secciones";
         }
         else {
-            var cs = Object.assign(new Array<Course_Student>(),course_student); 
-            var cl = Object.assign(new Array<Course>(),courselist);
-            var res = new Array<Course>();
+            // var cs = Object.assign(new Array<Course_Student>(),course_student); 
+            // var cl = Object.assign(new Array<Course>(),courselist);
+            // var res = new Array<Course>();
 
-            for(var i=0;i < cl.length;i++){
-                for(var j=0; j<cs.length; j++){
-                    if(cl[i].getId_course() == cs[j].getId_course()){
-                        res.push(cl[i]);
-                    }
-                }
-            }
-            return res; 
+            // for(var i=0;i < cl.length;i++){
+            //     for(var j=0; j<cs.length; j++){
+            //         if(cl[i].getId_course() == cs[j].getId_course()){
+            //             res.push(cl[i]);
+            //         }
+            //     }
+            // }
+            return courseList; 
         }
     }
     
     sendMessage(message:MessageModel): void {
 
+    }
+
+    findStudentById(studentId:number):Student{
+        const student = this.daoStudent.findById(studentId);
+        if (!student) {
+            throw "No existe el estudiante!"
+        } else {
+            return student;
+        };
+    }
+
+    findCourseById(courseId:number): Course{
+
+        const course = this.daoCourse.findById(courseId);
+
+        if(!course){
+            throw "No existe el curso"
+        } else {
+            return course;
+        }
+    }
+
+    findMessagesByCourseId(courseId:number): Array<Message> {
+        const messages:Array<Message> = this.daoMessage.findAllWithCourseId(courseId);
+        if(!messages){
+            throw "No hay mensajes en ese curso";
+        } else {
+            return messages;
+        }
     }
 
     

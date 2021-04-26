@@ -1,19 +1,19 @@
 const jwt = require('jwt-then');
-const secret = "wawawa"
+import {Request, Response, NextFunction} from 'express';
 
 
-const asyncFunction = async (req:any,res:any,next:any) => {
+const auth = async (req:any,res:any,next:any) => {
     try {
         if(!req.headers.authorization) throw "Forbidden!";
         const token = req.headers.authorization.split(' ')[1];
-        const payload = await jwt.verify(token,secret);
+        const payload = await jwt.verify(token,process.env.SECRET);
         req.payload = payload;
         next();
     } catch (err) {
         res.status(401).json({
-            message: "Forbidden! ERROR"
+            message: "Authentication ERROR!"
         })
     }
 }
 
-export default asyncFunction;
+export default auth;

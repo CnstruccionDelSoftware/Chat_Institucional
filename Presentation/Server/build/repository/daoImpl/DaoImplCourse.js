@@ -17,8 +17,27 @@ var DaoImplCourse = (function () {
             return courseList;
         }
     };
+    DaoImplCourse.prototype.findAllWithStudentId = function (courseStudentList) {
+        var _this = this;
+        ;
+        var courseListWithStudents = [];
+        courseStudentList.forEach(function (Course_Student) {
+            var temp = _this.course_list.find(function (course) { return course.getId_course() === Course_Student.getId_course(); });
+            courseListWithStudents.push(temp);
+        });
+        if (this.course_list == null) {
+            throw "no hay secciones";
+        }
+        else if (courseListWithStudents.length == 0) {
+            throw "no hay secciones con ese estudiante";
+        }
+        else {
+            return courseListWithStudents;
+        }
+    };
     DaoImplCourse.prototype.findById = function (id) {
-        throw new Error("Method not implemented.");
+        var course = this.course_list.find(function (course) { return course.getId_course() == id; });
+        return course;
     };
     return DaoImplCourse;
 }());

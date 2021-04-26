@@ -17,6 +17,10 @@ class DaoImplMessage implements DaoMessage{
         return this.message_list;
     }
 
+    findAllWithCourseId(courseId:number):Array<Message>{
+        return this.message_list;
+    }
+
 }
 
 export default DaoImplMessage;

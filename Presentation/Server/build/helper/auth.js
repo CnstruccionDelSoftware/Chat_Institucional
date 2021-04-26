@@ -37,8 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require('jwt-then');
-var secret = "wawawa";
-var asyncFunction = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+var auth = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var token, payload, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -47,7 +46,7 @@ var asyncFunction = function (req, res, next) { return __awaiter(void 0, void 0,
                 if (!req.headers.authorization)
                     throw "Forbidden!";
                 token = req.headers.authorization.split(' ')[1];
-                return [4, jwt.verify(token, secret)];
+                return [4, jwt.verify(token, process.env.SECRET)];
             case 1:
                 payload = _a.sent();
                 req.payload = payload;
@@ -56,12 +55,12 @@ var asyncFunction = function (req, res, next) { return __awaiter(void 0, void 0,
             case 2:
                 err_1 = _a.sent();
                 res.status(401).json({
-                    message: "Forbidden! ERROR"
+                    message: "Authentication ERROR!"
                 });
                 return [3, 3];
             case 3: return [2];
         }
     });
 }); };
-exports.default = asyncFunction;
+exports.default = auth;
 //# sourceMappingURL=auth.js.map

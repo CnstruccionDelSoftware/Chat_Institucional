@@ -16,7 +16,7 @@ var DaoImplStudent = (function () {
     DaoImplStudent.prototype.findById = function (id) {
         var student = this.student_list.find(function (e) { return e.getId_student() == id; });
         if (student == null) {
-            throw "No existe!!";
+            throw "El estudiante no existe!!";
         }
         else {
             return student;

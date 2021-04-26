@@ -17,6 +17,9 @@ var DaoImplMessage = (function () {
     DaoImplMessage.prototype.findAll = function () {
         return this.message_list;
     };
+    DaoImplMessage.prototype.findAllWithCourseId = function (courseId) {
+        return this.message_list;
+    };
     return DaoImplMessage;
 }());
 exports.default = DaoImplMessage;

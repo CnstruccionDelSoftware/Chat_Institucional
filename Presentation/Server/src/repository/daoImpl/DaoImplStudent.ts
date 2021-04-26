@@ -15,7 +15,7 @@ class DaoImplStudent implements DaoStudent {
         const student = this.student_list.find(e => e.getId_student() == id)!;
 
         if(student == null){
-            throw "No existe!!"
+            throw "El estudiante no existe!!"
         }else{
             return student;
         }

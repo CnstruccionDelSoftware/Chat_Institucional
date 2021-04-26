@@ -4,34 +4,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = __importDefault(require("./server/server"));
-var router_1 = __importDefault(require("./router/router"));
+var login_1 = __importDefault(require("./router/login"));
+var student_1 = __importDefault(require("./router/student"));
+var course_1 = __importDefault(require("./router/course"));
+var socket_1 = __importDefault(require("./server/socket"));
 var ServiceChatImpl_1 = __importDefault(require("./service/ServiceChatImpl"));
 var http = require("http");
-var socketIO = require("socket.io");
 var express = require("express");
 var path = require("path");
 var DaoImplMessage_1 = __importDefault(require("./repository/daoImpl/DaoImplMessage"));
-var loginController_1 = require("./controllers/loginController");
 var expressServer = server_1.default.init(5000, 'http://localhost');
 var server = http.createServer(expressServer.getApp());
-var io = new socketIO.Server(server);
-expressServer.getApp().use(router_1.default);
+var io = new socket_1.default(server);
 expressServer.getApp().use(express.static(path.join(__dirname, 'controllers')));
 expressServer.getApp().use(express.json());
 expressServer.getApp().use(express.urlencoded({ extended: true }));
 expressServer.getApp().use(require('cors')());
-expressServer.getApp().post("/test", loginController_1.loginUser);
-io.on('connection', function (socket) {
-    console.log('new connection', socket.id);
+expressServer.getApp().use(login_1.default);
+expressServer.getApp().use(student_1.default);
+expressServer.getApp().use(course_1.default);
+require('dotenv').config();
+expressServer.getApp().use("/login", login_1.default);
+expressServer.getApp().use("/student", student_1.default);
+expressServer.getApp().use("/course", course_1.default);
+io.getSocket().on('connection', function (socket) {
+    console.log('New connection: ', socket.id);
+    socket.emit('connection', null);
     var serviceChat = new ServiceChatImpl_1.default();
     var dao = new DaoImplMessage_1.default();
-    socket.on('login:chat', function (id, password) {
-        var res = serviceChat.login(id, password);
-        console.log(res);
-    });
-    socket.on('courseList:chat', function (id) {
-        var res = serviceChat.listStudentCourses(id);
-        console.log(res);
+    socket.on('sendMessage:chat', function (message) {
     });
 });
 server.listen(5000);
