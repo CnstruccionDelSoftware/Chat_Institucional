@@ -1,24 +1,32 @@
 import DaoStudent from "../dao/DaoStudent";
-import Student from "../../domain/Entity/Student";
+import {Sequelize, Model, DataTypes} from 'sequelize'; 
+import {IStudent, Student} from '../../domain/Model/Student';
+
 
 class DaoImplStudent implements DaoStudent {
 
-    student_list:Array<Student> = [new Student(1,'adriel','rosario','123') , 
-                                   new Student(2,'alex','rosario','321') , 
-                                   new Student(3,'alexis','Moises','abc')];
+    async findAll(): Promise<Array<IStudent>|null>{
+        const students: Array<IStudent> | null = await Student.find();
 
-    findAll(): Student[]{
-        throw new Error("Method not implemented.");
+        return students;
     }
-    findById(id: number): Student {
-        //se le agrega "!" para que el valor de retorno pueda ser null
-        const student = this.student_list.find(e => e.getId_student() == id)!;
 
-        if(student == null){
-            throw "El estudiante no existe!!"
-        }else{
-            return student;
-        }
+    async findById(id: string): Promise<IStudent|null> {
+        const student : IStudent | null = await Student.findOne({_id:id})
+
+        return student;
+    }
+
+    async findByUsernameAndPassword(username:string,password:string) : Promise<IStudent|null> {
+        const student : IStudent | null = await Student.findOne({username:username, password: password})
+
+        return student;
+    }
+
+    async findByUsername(username: string): Promise<IStudent|null>{
+        const student : IStudent | null = await Student.findOne({username: username}).exec();
+
+        return student;
     }
 
 }

@@ -1,34 +1,47 @@
-import Course from "../../domain/Entity/Course";
-import Course_Student from "../../domain/Entity/Course_Student";
+import mongoose from "mongoose";
+import {ICourse, Course} from "../../domain/Model/Course";
+import {CourseStudent, ICourseStudent} from "../../domain/Model/CourseStudent";
 import DaoCourse_Student from "../dao/DaoCourse_Student";
 
 class DaoImplCourse_Student implements DaoCourse_Student {
     
-    //id // course_id // studen_id
-    course_student_list:Array<Course_Student> = [new Course_Student(1,1,1),
-                                                 new Course_Student(2,2,2),
-                                                 new Course_Student(3,1,2)];
+    async findAll(): Promise<ICourseStudent[]|null> {
+        const courseStudents: Array<ICourseStudent>|null = await CourseStudent.find();
 
-
-    findAll(): Course_Student[] {
-        throw new Error("Method not implemented.");
-    }
-    findById(id: number): Course_Student {
-        throw new Error("Method not implemented.");
+        return courseStudents;
     }
 
-    findStudentCourses(id: number): Course_Student[] {
-        // const courseList = this.course_student_list.filter(cr => cr.getId_student() === id)!;
-        // console.log("Courselist"+courseList)
+    async findById(id: string): Promise<ICourseStudent|null> {
+        const courseStudent: ICourseStudent | null = await CourseStudent.findOne({_id:id});
 
-        // if(courseList == null){
-        //     throw "No tiene secciones";
-        // }else{
-        //     return courseList;
-        // }
-        let courseStudent:Course_Student[] = [];
-        courseStudent.push(this.course_student_list[1])
-        courseStudent.push(this.course_student_list[2])
+        return courseStudent;
+    }
+
+    async findStudentCourses(id: string): Promise<ICourse[]|null> {
+        
+        let courseStudents: Array<ICourseStudent> = await CourseStudent.find({id_student:id});
+
+        let arrayIds: string[] = [];
+        courseStudents.forEach(element => {
+            arrayIds.push(element.id_course)
+        });
+
+        let courses : ICourse[] = await Course.find().where('_id').in(arrayIds).exec();
+
+        return courses;
+    }
+
+    async create(entity:ICourseStudent): Promise<boolean> {
+        try {
+            await entity.save();
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async modify(entity: ICourseStudent): Promise<ICourseStudent|null> {
+        const courseStudent : ICourseStudent | null = await CourseStudent.findOneAndReplace({_id:entity._id})
 
         return courseStudent;
     }

@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Student = (function () {
-    function Student(id_student, name, lastname, password) {
+    function Student(id_student, username, name, lastname, password) {
+        this.username = username;
         this.id_student = id_student;
         this.name = name;
         this.lastname = lastname;
@@ -30,6 +31,12 @@ var Student = (function () {
     };
     Student.prototype.setPassword = function (password) {
         this.password = password;
+    };
+    Student.prototype.getUsername = function () {
+        return this.username;
+    };
+    Student.prototype.setUsername = function (username) {
+        this.username = username;
     };
     return Student;
 }());

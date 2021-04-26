@@ -9,5 +9,7 @@ var courseController_1 = require("../controllers/courseController");
 var auth_1 = __importDefault(require("../helper/auth"));
 var router = express_1.Router();
 router.get("/messages", auth_1.default, errorHandler_1.default(courseController_1.getMessagesOfCourse));
+router.post("/create", auth_1.default, errorHandler_1.default(courseController_1.createCourse));
+router.post("/addStudent", auth_1.default, errorHandler_1.default(courseController_1.addStudentToCourse));
 exports.default = router;
 //# sourceMappingURL=course.js.map

@@ -1,97 +1,60 @@
-//import MessageModel from "../domain/Model/MessageModel";
-
-import Student from "../domain/Entity/Student";
+import {IStudent, Student} from "../domain/Model/Student";
 import ServiceChatImpl from '../service/ServiceChatImpl';
 import {Request, Response} from 'express';
 const jwt = require('jwt-then');
+import CryptoJS from 'crypto-js';
 
-
-// let username = document.getElementById('usr');
-// let password = document.getElementById('psw');
-// let btn = document.getElementById('btn')
-
-// class LoginController
-
-//     // login(id: number , password:string){
-//     //     Login.io.emit('login:chat',id,password);
-//     // }
-
-//     // getCourses(id:number){
-//     //     Login.io.emit('courseList:chat',id);
-//     // }
-    
-//     public static async function: any loginUser(req:any,res:any) {
-//         const {id, password} = req.body;
-        
-//         const student:Student = this.serviceChat.login(id, password);
-
-//         res.json({
-//             message: "User logged in succesfully!",
-//         })
-//     }
-
-//     //sendMessage(message:MessageModel){
-//     //    Login.io.emit('sendMessage:chat',message);
-//     //}
-
-//     //sendMessage(message:any){
-//     //    Login.io.emit('sendMessage:chat',JSON.stringify(message));
-//     //}
-
-// }
 
 const serviceChat:ServiceChatImpl = new ServiceChatImpl();
 
-export const loginUser = async (req:Request,res:Response) => {
+export const loginStudent = async (req:Request,res:Response) => {
     try{
+        const {username, password} = req.body;
 
-        const {id, password} = req.body;
+        const student : IStudent | null = await serviceChat.login(username, CryptoJS.SHA256(password+process.env.SALT).toString());
 
-        const student:Student = serviceChat.login(id, password);
+        const token = await jwt.sign({username:username}, process.env.SECRET)
 
-        const token = await jwt.sign({id:id}, process.env.SECRET)
+        student.password = '';
 
         res.json({
             message: "User logged in succesfully!",
-            token
+            token,
+            student
         })
-    } catch {
+    } catch(err) {
         res.status(401).json({
-            message: "User error!",
+            message: err,
         })
     }
-    
-
-    
 }
 
-// Login.io = socket;
+export const registerStudent = async (req:Request, res:Response) => {
+    try {
+        const {username, password, name, lastname} = req.body;
 
-// function messageReceived(respose:any){
+        const studentExists: IStudent | null = await Student.findOne({username});
+        if(studentExists) throw "Student already exists";
 
-// }
+        const student: IStudent = await Student.create({
+            username: username,
+            password : CryptoJS.SHA256(password+process.env.SALT).toString(),
+            name: name,
+            lastname : lastname
+        })
 
-// let login:Login = new Login(messageReceived);
+        student.save();
 
-//probando servicio login
-// login.login(1,'123');
-
-// //probando servicio get courses
-// login.getCourses(1);
-
-
-//var m = {idest:1,idcr:1,content:'como estan'};
-//var mjson = JSON.stringify(m);
-//login.sendMessage(mjson);
-//probando servicio sendMessage
-//var s = new Array<Student>(new Student(4,'angelo',"gonzales",'abcd'), 
-//                          new Student(5,'ana',"paredes",'12345'));
-
-//var m = new Array<MessageModel>();
-
-//var c = new CourseModel(3,'Lenguas',s,m);
-
-//var mo = new MessageModel(6,s[0],c,'hollllla');
+        res.json({
+            message: "User registered succesfully!",
+        })
+        
+    } catch(err) {
+        res.status(401).json({
+            message: err,
+        })
+    }
+}
 
 
 

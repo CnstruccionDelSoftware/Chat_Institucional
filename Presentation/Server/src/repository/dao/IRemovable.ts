@@ -1,5 +1,5 @@
 interface IRemovable<T>{
-    delete(entity:T):void;
+    delete(entity:T):Promise<void>;
 }
 
 export default IRemovable;

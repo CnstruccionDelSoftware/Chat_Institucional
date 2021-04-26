@@ -1,10 +1,11 @@
-import Course from "../../domain/Entity/Course";
-import Course_Student from "../../domain/Entity/Course_Student";
+import {ICourse} from "../../domain/Model/Course";
+import {ICourseStudent} from "../../domain/Model/CourseStudent";
 
 import IReadable from "./IReadable";
+import IWritable from "./IWritable";
 
-interface DaoCourse extends IReadable<Course,number>{
-    findAllWithStudentId(courseStudentList:Course_Student[]): Course[];
+interface DaoCourse extends IReadable<ICourse,string>, IWritable<ICourse>{
+    findBySubject(subject:string) : Promise<ICourse|null>;
 }
 
 export default DaoCourse;

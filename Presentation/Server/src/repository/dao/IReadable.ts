@@ -1,6 +1,6 @@
 interface IReadable<T,ID>{
-    findAll(): Array<T>;
-    findById(id:ID): T;
+    findAll(): Promise<Array<T>|null>;
+    findById(id:ID): Promise<T|null>;
 }
 export default IReadable;
 

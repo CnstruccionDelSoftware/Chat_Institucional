@@ -1,17 +1,17 @@
 import ServiceChat from "./ServiceChat";
-import Student from "../domain/Entity/Student";
+import {IStudent} from "../domain/Model/Student";
 import DaoImplStudent from "../repository/daoImpl/DaoImplStudent";
 import DaoStudent from "../repository/dao/DaoStudent";
-import Course from "../domain/Entity/Course";
+import {ICourse} from "../domain/Model/Course";
 import DaoCourse from "../repository/dao/DaoCourse"; 
 import DaoImplCourse from "../repository/daoImpl/DaoImplCourse";
 import DaoCourse_Student from "../repository/dao/DaoCourse_Student";
 import DaoImplCourse_Student from "../repository/daoImpl/DaoImplCourse_Student";
-import Course_Student from "../domain/Entity/Course_Student";
-import MessageModel from "../domain/Model/MessageModel";
+import {ICourseStudent} from "../domain/Model/CourseStudent";
+import {IMessage} from "../domain/Model/Message";
 import DaoMessage from "../repository/dao/DaoMessage";
 import DaoImplMessage from "../repository/daoImpl/DaoImplMessage";
-import Message from "../domain/Entity/Message";
+import jwt from "jwt-then";
 
 class ServiceChatImpl implements ServiceChat{
     
@@ -20,86 +20,89 @@ class ServiceChatImpl implements ServiceChat{
     private daoCourse_Student:DaoCourse_Student = new DaoImplCourse_Student();
     private daoMessage:DaoMessage = new DaoImplMessage();
 
-    login(id: number, password: string): Student {
-        const student = this.daoStudent.findById(id);
-        if(student.valueOf() == "No existe!!"){
-            throw "No existe!!"
-        }else{
-            const st = Object.assign(new Student(0,'','',''), student);
-            if(st.getPassword() != password){
-                throw "Wrong password";
-            }
-            else{
-                return st;
-            }
-        }
+    async login(username: string, password: string): Promise<IStudent> {
+        const student : IStudent | null  = await this.daoStudent.findByUsernameAndPassword(username, password);
+
+        if(!student) throw "Username and password did not match.";
+
+        return student;
     }
 
-    listStudentCourses(id: number): Array<Course> {
-        const course_student = this.daoCourse_Student.findStudentCourses(id);
-        console.log(course_student)
+    async listStudentCourses(id: string): Promise<Array<ICourse>|null> {
+        const course_student : Array<ICourse> | null = await this.daoCourse_Student.findStudentCourses(id);
 
-        const courseList = this.daoCourse.findAllWithStudentId(course_student);
-        console.log(3)
-
-
-        if(course_student.valueOf() == "No tiene secciones"){
-            throw "no tiene secciones";
-        }
-        else if(courseList.valueOf() == "no hay secciones"){
-            throw "no hay secciones";
-        }
-        else {
-            // var cs = Object.assign(new Array<Course_Student>(),course_student); 
-            // var cl = Object.assign(new Array<Course>(),courselist);
-            // var res = new Array<Course>();
-
-            // for(var i=0;i < cl.length;i++){
-            //     for(var j=0; j<cs.length; j++){
-            //         if(cl[i].getId_course() == cs[j].getId_course()){
-            //             res.push(cl[i]);
-            //         }
-            //     }
-            // }
-            return courseList; 
-        }
+        return course_student; 
     }
     
-    sendMessage(message:MessageModel): void {
+    async sendMessage(message: IMessage, username: string): Promise<IMessage> {
+        const msg = await this.daoMessage.createMessage(message, username);
+        if(!msg) throw "Message was not sent."
 
+        return msg;
     }
 
-    findStudentById(studentId:number):Student{
-        const student = this.daoStudent.findById(studentId);
+    async findStudentById(studentId:string):Promise<IStudent|null>{;
+        const student : IStudent | null = await this.daoStudent.findById(studentId);
         if (!student) {
-            throw "No existe el estudiante!"
+            throw "Student doesn't exist."
         } else {
             return student;
         };
     }
 
-    findCourseById(courseId:number): Course{
+    async findStudentByUsername(username:string):Promise<IStudent|null>{
+        const student: IStudent | null = await this.daoStudent.findByUsername(username)
 
-        const course = this.daoCourse.findById(courseId);
+        if(!student){
+            throw "Student doesn't exist.";
+        } else {
+            return student;
+        }
+    }
+
+    async findCourseById(courseId:string): Promise<ICourse|null>{
+        const course: ICourse | null = await this.daoCourse.findById(courseId);
 
         if(!course){
-            throw "No existe el curso"
+            throw "Course doesn't exist."
         } else {
             return course;
         }
     }
 
-    findMessagesByCourseId(courseId:number): Array<Message> {
-        const messages:Array<Message> = this.daoMessage.findAllWithCourseId(courseId);
+    async findCourseBySubject(subject:string) : Promise<ICourse|null> {
+        const course: ICourse | null = await this.daoCourse.findBySubject(subject);
+
+        return course;
+
+    }
+
+    async findMessagesByCourseId(courseId:string): Promise<Array<IMessage>|null> {
+        const messages : Array<IMessage> | null = await this.daoMessage.findAllWithCourseId(courseId);
         if(!messages){
-            throw "No hay mensajes en ese curso";
+            throw "There are no messages for this course.";
         } else {
             return messages;
         }
     }
 
-    
-    
+    async createCourse(course:ICourse): Promise<boolean> {
+        const created:boolean = await this.daoCourse.create(course)
+        if(!created){
+            throw "Course wasn't created.";
+        } else {
+            return true;
+        }
+    }
+
+    async createCourseStudent(courseStudent:ICourseStudent): Promise<boolean> {
+        const created : boolean = await this.daoCourse_Student.create(courseStudent)
+        if(!created){
+            throw "Course wasn't created.";
+        } else {
+            return true;
+        }
+    }
 }
 
 export default ServiceChatImpl;

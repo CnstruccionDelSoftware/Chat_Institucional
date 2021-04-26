@@ -1,8 +1,7 @@
-import Student from "../domain/Entity/Course";
+import {IStudent} from "../domain/Model/Student";
 import ServiceChatImpl from '../service/ServiceChatImpl';
 import {Request, Response} from 'express';
-import Course from "../domain/Entity/Course";
-
+import {ICourse} from "../domain/Model/Course";
 
 const jwt = require('jwt-then');
 
@@ -10,13 +9,15 @@ const serviceChat:ServiceChatImpl = new ServiceChatImpl();
 
 export const getStudentCourses = async (req:Request,res:Response) => {
     try{
-        const {id} = req.body;
+        const username = req.param('username');
+        console.log(username)
 
-        const student:any = serviceChat.findStudentById(id);
+        const studentExists: IStudent | null = await serviceChat.findStudentByUsername(username);
 
-        const studentCourses:Array<Course> = serviceChat.listStudentCourses(id);
-        console.log(studentCourses);
+        if(!studentExists) throw "Student doesn't exist.";
 
+        const studentCourses : ICourse[] | null = await serviceChat.listStudentCourses(studentExists._id);
+        //console.log(studentCourses);
 
         res.json({
            studentCourses

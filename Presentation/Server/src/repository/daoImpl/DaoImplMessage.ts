@@ -1,24 +1,41 @@
-import Message from "../../domain/Entity/Message";
 import DaoMessage from "../dao/DaoMessage";
+import {Message,IMessage} from "../../domain/Model/Message";
+
 
 class DaoImplMessage implements DaoMessage{
 
-    message_list:Array<Message> = [new Message(1,1,1,'Holaa') , new Message(2,2,1,'klklk')];
-
-    create(entity: Message): void {
-        this.message_list.push(entity);
+    async create(entity: IMessage): Promise<boolean> {
+        try {
+            await entity.save();
+            return true;
+        } catch {
+            return false;
+        }
     }
 
-    modify(entity: Message): void {
-        throw new Error("Method not implemented.");
+    async createMessage(entity: IMessage, username: string) : Promise<IMessage|null>{
+        try {
+            await entity.save();
+            return entity;
+        } catch {
+            return null;
+        }
     }
 
-    findAll():Array<Message>{
-        return this.message_list;
+    async modify(entity: IMessage): Promise<IMessage|null> {
+        const message : IMessage | null = await Message.findOneAndReplace({_id:entity._id})
+
+        return message;
     }
 
-    findAllWithCourseId(courseId:number):Array<Message>{
-        return this.message_list;
+    async findAll(): Promise<IMessage[]> {
+        const messages : Array<IMessage> | null = await Message.find();
+        return messages;
+    }
+
+    async findAllWithCourseId(courseId:string):Promise<Array<IMessage>>{
+        const messages : Array<IMessage> | null = await Message.find({id_course:courseId});
+        return messages;
     }
 
 }

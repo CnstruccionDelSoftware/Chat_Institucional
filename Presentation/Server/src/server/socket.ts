@@ -7,7 +7,11 @@ class Socket{
     
     constructor(server:http.Server){
         this.server = server;
-        this.socket = new socketIO.Server(server);
+        this.socket = new socketIO.Server(server, {
+            cors: {
+                origin: '*' 
+            }
+        });
     }
 
     getSocket() : socketIO.Server {

@@ -1,9 +1,10 @@
-import Message from "../../domain/Entity/Message";
+import {IMessage} from "../../domain/Model/Message";
 import IReadable from "./IReadable";
 import IWritable from "./IWritable";
 
-interface DaoMessage extends IWritable<Message>{
-    findAllWithCourseId(courseId:number): Message[];
+interface DaoMessage extends IWritable<IMessage>{
+    findAllWithCourseId(courseId:string): Promise<IMessage[]|null>;
+    createMessage(entity: IMessage, username: string) : Promise<IMessage|null>
 }
 
 export default DaoMessage;

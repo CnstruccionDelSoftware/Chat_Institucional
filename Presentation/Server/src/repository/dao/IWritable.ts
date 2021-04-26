@@ -1,6 +1,6 @@
 interface IWritable<T>{
-    create(entity:T): void;
-    modify(entity:T): void;
+    create(entity:T): Promise<boolean>;
+    modify(entity:T): Promise<T|null>;
 }
 
 export default IWritable;

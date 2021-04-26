@@ -44,23 +44,33 @@ var ServiceChatImpl_1 = __importDefault(require("../service/ServiceChatImpl"));
 var jwt = require('jwt-then');
 var serviceChat = new ServiceChatImpl_1.default();
 var getStudentCourses = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, student, studentCourses;
-    return __generator(this, function (_a) {
-        try {
-            id = req.body.id;
-            student = serviceChat.findStudentById(id);
-            studentCourses = serviceChat.listStudentCourses(id);
-            console.log(studentCourses);
-            res.json({
-                studentCourses: studentCourses
-            });
+    var username, studentExists, studentCourses, _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                username = req.param('username');
+                console.log(username);
+                return [4, serviceChat.findStudentByUsername(username)];
+            case 1:
+                studentExists = _b.sent();
+                if (!studentExists)
+                    throw "Student doesn't exist.";
+                return [4, serviceChat.listStudentCourses(studentExists._id)];
+            case 2:
+                studentCourses = _b.sent();
+                res.json({
+                    studentCourses: studentCourses
+                });
+                return [3, 4];
+            case 3:
+                _a = _b.sent();
+                res.status(401).json({
+                    message: "User error!",
+                });
+                return [3, 4];
+            case 4: return [2];
         }
-        catch (_b) {
-            res.status(401).json({
-                message: "User error!",
-            });
-        }
-        return [2];
     });
 }); };
 exports.getStudentCourses = getStudentCourses;

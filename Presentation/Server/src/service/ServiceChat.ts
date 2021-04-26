@@ -1,22 +1,26 @@
-//import Student from "../domain/Entity/Student";
-import Course from "../domain/Entity/Course";
-import Message from "../domain/Entity/Message";
-import Student from "../domain/Entity/Student";
-import MessageModel from "../domain/Model/MessageModel";
+import {ICourse} from "../domain/Model/Course";
+import { ICourseStudent } from "../domain/Model/CourseStudent";
+import {IMessage} from "../domain/Model/Message";
+import {IStudent} from "../domain/Model/Student";
 
 interface ServiceChat{
 
-    login(id:number,password:string) : Student;
+    login(id:string,password:string) : Promise<IStudent|null>;
 
-    listStudentCourses(id:number) : Array<Course>;
+    listStudentCourses(id:string) : Promise<Array<ICourse>|null>;
 
-    sendMessage(message:MessageModel) : void;
+    sendMessage(message: IMessage, username:string) : Promise<IMessage>;
 
-    findStudentById(studentId:number):Student;
+    findStudentById(studentId:string): Promise<IStudent|null>;
 
-    findCourseById(courseId:number): Course;
+    findCourseById(courseId:string): Promise<ICourse|null>;
 
-    findMessagesByCourseId(courseId:number): Array<Message>;
+    findMessagesByCourseId(courseId:string): Promise<Array<IMessage>|null>;
+
+    createCourse(course:ICourse): Promise<boolean>;
+
+    createCourseStudent(courseStudent:ICourseStudent): Promise<boolean>;
+
 }
 
 export default ServiceChat;

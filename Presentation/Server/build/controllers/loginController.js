@@ -39,35 +39,77 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = void 0;
+exports.registerStudent = exports.loginStudent = void 0;
+var Student_1 = require("../domain/Model/Student");
 var ServiceChatImpl_1 = __importDefault(require("../service/ServiceChatImpl"));
 var jwt = require('jwt-then');
+var crypto_js_1 = __importDefault(require("crypto-js"));
 var serviceChat = new ServiceChatImpl_1.default();
-var loginUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, password, student, token, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+var loginStudent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, password, student, token, err_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _c.trys.push([0, 2, , 3]);
-                _a = req.body, id = _a.id, password = _a.password;
-                student = serviceChat.login(id, password);
-                return [4, jwt.sign({ id: id }, process.env.SECRET)];
+                _b.trys.push([0, 3, , 4]);
+                _a = req.body, username = _a.username, password = _a.password;
+                return [4, serviceChat.login(username, crypto_js_1.default.SHA256(password + process.env.SALT).toString())];
             case 1:
-                token = _c.sent();
+                student = _b.sent();
+                return [4, jwt.sign({ username: username }, process.env.SECRET)];
+            case 2:
+                token = _b.sent();
+                student.password = '';
                 res.json({
                     message: "User logged in succesfully!",
-                    token: token
+                    token: token,
+                    student: student
                 });
-                return [3, 3];
-            case 2:
-                _b = _c.sent();
+                return [3, 4];
+            case 3:
+                err_1 = _b.sent();
                 res.status(401).json({
-                    message: "User error!",
+                    message: err_1,
                 });
-                return [3, 3];
-            case 3: return [2];
+                return [3, 4];
+            case 4: return [2];
         }
     });
 }); };
-exports.loginUser = loginUser;
+exports.loginStudent = loginStudent;
+var registerStudent = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, password, name_1, lastname, studentExists, student, err_2;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                _a = req.body, username = _a.username, password = _a.password, name_1 = _a.name, lastname = _a.lastname;
+                return [4, Student_1.Student.findOne({ username: username })];
+            case 1:
+                studentExists = _b.sent();
+                if (studentExists)
+                    throw "Student already exists";
+                return [4, Student_1.Student.create({
+                        username: username,
+                        password: crypto_js_1.default.SHA256(password + process.env.SALT).toString(),
+                        name: name_1,
+                        lastname: lastname
+                    })];
+            case 2:
+                student = _b.sent();
+                student.save();
+                res.json({
+                    message: "User registered succesfully!",
+                });
+                return [3, 4];
+            case 3:
+                err_2 = _b.sent();
+                res.status(401).json({
+                    message: err_2,
+                });
+                return [3, 4];
+            case 4: return [2];
+        }
+    });
+}); };
+exports.registerStudent = registerStudent;
 //# sourceMappingURL=loginController.js.map

@@ -39,28 +39,119 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMessagesOfCourse = void 0;
+exports.addStudentToCourse = exports.createCourse = exports.getMessagesOfCourse = void 0;
 var ServiceChatImpl_1 = __importDefault(require("../service/ServiceChatImpl"));
+var Course_1 = require("../domain/Model/Course");
+var CourseStudent_1 = require("../domain/Model/CourseStudent");
+var mongoose_1 = __importDefault(require("mongoose"));
 var jwt = require('jwt-then');
 var serviceChat = new ServiceChatImpl_1.default();
 var getMessagesOfCourse = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, course, messages;
+    var id, messages, err_1;
     return __generator(this, function (_a) {
-        try {
-            id = req.body.id;
-            course = serviceChat.findCourseById(id);
-            messages = serviceChat.findMessagesByCourseId(id);
-            res.json({
-                messages: messages
-            });
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                id = req.param('id');
+                return [4, serviceChat.findMessagesByCourseId(id)];
+            case 1:
+                messages = _a.sent();
+                res.json({
+                    messages: messages,
+                });
+                return [3, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.status(401).json({
+                    message: err_1,
+                });
+                return [3, 3];
+            case 3: return [2];
         }
-        catch (_b) {
-            res.status(401).json({
-                message: "User error!",
-            });
-        }
-        return [2];
     });
 }); };
 exports.getMessagesOfCourse = getMessagesOfCourse;
+var createCourse = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var subject, courseExists, created, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                subject = req.body.subject;
+                return [4, serviceChat.findCourseBySubject(subject)];
+            case 1:
+                courseExists = _a.sent();
+                if (courseExists)
+                    throw "Course already exists";
+                return [4, serviceChat.createCourse(new Course_1.Course({ subject: subject }))];
+            case 2:
+                created = _a.sent();
+                if (!created) {
+                    throw "Course wasn't created";
+                }
+                else {
+                    res.json({
+                        message: "Course added sucessfully"
+                    });
+                }
+                return [3, 4];
+            case 3:
+                err_2 = _a.sent();
+                res.status(401).json({
+                    message: err_2,
+                });
+                return [3, 4];
+            case 4: return [2];
+        }
+    });
+}); };
+exports.createCourse = createCourse;
+var addStudentToCourse = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, username, subject, studentExists, courseExists, studentCourses, created, err_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 5, , 6]);
+                _a = req.body, username = _a.username, subject = _a.subject;
+                return [4, serviceChat.findStudentByUsername(username)];
+            case 1:
+                studentExists = _b.sent();
+                if (!studentExists)
+                    throw "Student doesn't exist.";
+                return [4, serviceChat.findCourseBySubject(subject)];
+            case 2:
+                courseExists = _b.sent();
+                if (!courseExists)
+                    throw "Course doesn't exist.";
+                return [4, serviceChat.listStudentCourses(studentExists._id)];
+            case 3:
+                studentCourses = _b.sent();
+                if (studentCourses === null || studentCourses === void 0 ? void 0 : studentCourses.includes(courseExists))
+                    throw "Student already in course.";
+                return [4, CourseStudent_1.CourseStudent.create({
+                        id_student: mongoose_1.default.Types.ObjectId(studentExists._id),
+                        id_course: mongoose_1.default.Types.ObjectId(courseExists._id)
+                    })];
+            case 4:
+                created = _b.sent();
+                if (!created) {
+                    throw "Course wasn't created";
+                }
+                else {
+                    res.json({
+                        message: "Course was added successfully;",
+                    });
+                }
+                return [3, 6];
+            case 5:
+                err_3 = _b.sent();
+                res.status(401).json({
+                    message: err_3,
+                });
+                return [3, 6];
+            case 6: return [2];
+        }
+    });
+}); };
+exports.addStudentToCourse = addStudentToCourse;
 //# sourceMappingURL=courseController.js.map

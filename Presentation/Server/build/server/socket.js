@@ -4,7 +4,11 @@ var socketIO = require("socket.io");
 var Socket = (function () {
     function Socket(server) {
         this.server = server;
-        this.socket = new socketIO.Server(server);
+        this.socket = new socketIO.Server(server, {
+            cors: {
+                origin: '*'
+            }
+        });
     }
     Socket.prototype.getSocket = function () {
         return this.socket;

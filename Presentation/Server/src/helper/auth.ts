@@ -1,6 +1,4 @@
 const jwt = require('jwt-then');
-import {Request, Response, NextFunction} from 'express';
-
 
 const auth = async (req:any,res:any,next:any) => {
     try {
